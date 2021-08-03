@@ -1,0 +1,35 @@
+---
+profile:
+  # target: "asgi://myapp.app_admin"
+  base_url: https://example.com/
+  # event_hooks:
+  #   request:
+  #     - requests_job.eventhooks:debug_request
+  #   response:
+  #     - requests_job.eventhooks:debug_response
+  jobs:
+    - name: success
+      # depend: success
+      # base_url: user
+      # commons:
+      #   auth:
+      #     type: HttpBasicAuth
+      #     user: ${USERNAME}
+      #     pass: ${PASSWORD}
+      # parallel: []
+      # series: []
+      tasks:
+        - url: "{id}"
+          kwargs:
+            id: 1
+          event_hooks:
+            request:
+              - requests_job.eventhooks:debug_request
+            response:
+              - requests_job.eventhooks:debug_response
+          expect:
+            code: "{code} != 200"
+            $code.eval:
+              - "200 <= {$res}.status_code and {$res}.status_code < 300"
+        # - url: http://asdfasdfasdfa.com/
+        # https://httpbin.org

@@ -1,0 +1,122 @@
+---
+# profile:
+version: 0
+app: tests.mock:app
+# transport:
+#   type: requests_job:ASGITransport
+#   kwargs:
+#     app: tests.mock:app
+#     client: ["127.0.0.1", 123]
+base_url: http://testserver
+cert:
+  type: requests_job.builtins:tuple
+  args:
+    - ["path/to/client.pem", "path/to/client.key"]
+# proxies:
+#   - http://user:pass@10.0.0.1
+aliases:
+  HTTPBasicAuth: requests.auth:HTTPBasicAuth
+plugins:
+  # save: "sssssss:save"
+  # actions:
+  #   # on_startup:
+  #   # on_shutdown:
+  #   on_execute:
+  #     print: {}
+  #   on_error:
+  #     print: {}
+  #   on_complete:
+  #     print: {}
+  #   cache:
+  #     user: myuser
+  #     pass: mypass
+
+# event_hooks:
+#   request:
+#     - requests_job.eventhooks:debug_request
+#   response:
+#     - requests_job.eventhooks:debug_response
+jobs:
+  # - name: test_ping
+  #   tasks:
+  #     - url: "/"
+  #       expect:
+  #         status_code: 200
+  #     - url: "/docs"
+  #       expect:
+  #         status_code: 200
+  #         json: {}
+  - name: test_auth
+    tasks:
+      - url: "/auth/basic"
+        expect:
+          status_code: 401
+      - url: "/auth/basic"
+        auth:
+          type: requests.auth:HTTPBasicAuth
+          kwargs: { username: "dummy", password: "password" }
+        expect:
+          status_code: 200
+      - url: "/auth/basic"
+        expect:
+          status_code: 401
+      - url: "/auth/token"
+        method: post
+        data: { username: "dummy", password: "password" }
+        expect:
+          status_code: 200
+      - url: "/post_record"
+        method: post
+        json: { name: "aaa", arr: [1, 2, 3] }
+        expect:
+          raise_for_status: true
+          http_version: HTTP/1.1
+          headers:
+            content-type: application/json
+          cookies: { "a": 1 }
+          status_code: 200
+          json:
+            { name: "aaa", arr: [1, 2, 3, 4], parent: { name: bob, age:20 } }
+        on_success:
+          save: { auth: $.id }
+      - url: "/get_record/{id}"
+        kwargs:
+          id: 1
+        expect:
+          status_code: 200
+      - url: "/auth/basic"
+        expect:
+          status_code: 401
+      # - url: "http://localhost:8000"
+      #   expect:
+      #     code: 200
+      #     json: { name: 1 }
+      #   on_execute:
+      #     print: {}
+      #   on_success:
+      #     print: {}
+      #     save:
+      #       { name: auth, age: auth, name2: auth, name3: auth, name4: auth }
+      - url: "/file"
+        method: post
+        files:
+          - key: file
+            # name: sample.txt # nameは受け付けない？？
+            path: tests/mock/files/sample_1.txt
+        expect:
+          status_code: 200
+          text: "this is sample 1."
+
+      - url: /file/upload_multiple
+        method: post
+        files:
+          - key: files
+            path: tests/mock/files/sample_1.txt
+          - key: files
+            path: tests/mock/files/sample_2.txt
+        expect:
+          json:
+            [
+              { "name": "sample_1.txt", "content": "this is sample 1." },
+              { "name": "sample_2.txt", "content": "this is sample 2." },
+            ]

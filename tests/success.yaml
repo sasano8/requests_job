@@ -1,0 +1,20 @@
+---
+profile:
+  target: "asgi://myapp.app_admin"
+  port: "8080 - 8080"
+  jobs:
+    - name: update
+      tasks:
+        - url: persons/all_update
+          method: post
+        - url: persons/{id}
+          method: patch
+          query:
+            id: 1
+            name: bob
+          body:
+            name: sasano8
+    - name: aggregate
+      tasks:
+        - url: persons/all_update
+          method: post
