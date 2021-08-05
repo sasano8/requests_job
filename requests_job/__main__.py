@@ -1,13 +1,14 @@
 import typer
 
-from .parser import load_profile
+from .worker import HttpxJob
 
 app = typer.Typer()
 
 
 @app.command()
-def run(path: str):
-    profile = load_profile(path)
+def run(path: str, extension: str = None):
+    job = HttpxJob.parse_file(path=path, extension=extension)
+    job.run()
 
 
 if __name__ == "__main__":

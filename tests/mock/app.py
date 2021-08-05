@@ -3,8 +3,8 @@ from typing import Any, AsyncGenerator, Dict, List
 
 from aiofiles.tempfile import NamedTemporaryFile
 from aiofiles.threadpool.binary import AsyncBufferedIOBase
-from fastapi import Depends, FastAPI, File, Request, UploadFile
-from starlette.responses import FileResponse
+from fastapi import Body, Depends, FastAPI, File, Request, UploadFile
+from starlette.responses import FileResponse, Response
 
 from .auth import router as auth_router
 
@@ -27,6 +27,12 @@ async def on_startup():
 async def on_shutdown():
     global count_shutdown
     count_shutdown += 1
+
+
+def clear_count():
+    global count_startup, count_shutdown
+    count_startup = 0
+    count_shutdown = 0
 
 
 @app.get("/")
@@ -108,8 +114,13 @@ async def upload_multiple_file(files: List[UploadFile] = File(...)):
     results = []
     for file in files:
         content = await file.read()
-        results.append({"name": file.filename, "content": content})  # type: ignore
-        # async with NamedTemporaryFile("wb") as tmp:
-        #     await tmp.write(await file.read())
-        #     await tmp.flush()
+        results.append({"name": file.filename, "content": content})
     return results
+
+
+@app.post("/wait")
+async def wait_request(wait: float = Body(0, embed=True)):
+    import asyncio
+
+    await asyncio.sleep(wait)
+    return None

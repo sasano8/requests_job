@@ -1,13 +1,6 @@
-from functools import partial, wraps
-from typing import Union
-
-from asgi_lifespan import LifespanManager
-from httpx import Response
-
-from . import verifier
+from . import parser, verifier
 from .client import AsyncClientWrapper
 from .schemas import Job, Profile
-from .transport import ASGITransportLifespan
 
 
 class Token:
@@ -15,71 +8,62 @@ class Token:
         self.is_cancelled = False
 
 
-def run(config: Union[dict, Profile], token=None):
-    token = token or Token()
-    if isinstance(config, dict):
-        profile = Profile(**config)
-    elif isinstance(config, Profile):
-        profile = config
-    else:
-        raise TypeError(f"{config.__class__} is not valid type.")
+class HttpxJob:
+    parser = parser
+    __schema__ = Profile
 
-    for job in profile.jobs:
-        execute_job(job, token)
+    def __init__(self, profile):
+        if not isinstance(profile, self.__schema__):
+            raise TypeError(f"{profile} is not type: {self.__schema__}")
 
+        self.profile = profile
 
-def execute_job(job: Job, token):
-    import asyncio
+    @classmethod
+    def parse_file(cls, path: str, extension: str = None, deserializer: str = None):
+        dic = cls.parser.parse_file(
+            path=path, extension=extension, deserializer=deserializer
+        )
+        return cls.parse_dict(dic)
 
-    asyncio.run(execute(job, token))
+    @classmethod
+    def parse_str(cls, content: str, extension: str = None, deserializer: str = None):
+        dic = cls.parser.parse_str(
+            content=content, extension=extension, deserializer=deserializer
+        )
+        return cls.parse_dict(dic)
 
+    @classmethod
+    def parse_dict(cls, profile: dict):
+        if not isinstance(profile, dict):
+            raise TypeError(f"{profile} is not dict")
+        profile = cls.__schema__(**profile)
+        return cls(profile)
 
-def manage_lifespan(func):
-    @wraps(func)
-    async def wrapper(job: Job, token):
-        lifespan = None
-        if job.transport:
-            transport = job.transport.get_value()
-            if isinstance(transport, ASGITransportLifespan):
-                lifespan = transport
+    def run(self, token=None):
+        token = token or Token()
+        for job in self.profile.jobs:
+            self.execute_job(job, token)
 
-        if job.app:
-            # transportを使用しない場合、サーバエラーはraiseされ、処理が失敗する
-            lifespan = LifespanManager(job.app.value.attr)  # type: ignore
+    @classmethod
+    def execute_job(cls, job: Job, token):
+        import asyncio
 
-        if lifespan:
-            # job.event_hooks.asgi_startup
-            # httpxはstartup,shutdownイベントを発火しないので、発火させる
-            async with LifespanManager(job.app.value.attr):
-                await func(job, token)
-            # job.event_hooks.asgi_shutdown
-        else:
-            await func(job, token)
+        asyncio.run(cls.execute(job, token))
 
-    return wrapper
+    @classmethod
+    async def execute(cls, job: Job, token):
+        client_args = job.build_client_args()
+        event_hooks = client_args.pop("event_hooks", {})
 
+        async with AsyncClientWrapper(**client_args) as client:
+            for task in job.tasks:
+                if token.is_cancelled:
+                    break
 
-@manage_lifespan
-async def execute(job: Job, token):
-    client_args = job.build_client_args()
-    event_hooks = client_args.pop("event_hooks", {})
+                request_args = task.build_request_args()
+                event_hooks = request_args.pop("event_hooks", {"expect": []})
 
-    if job.app is not None:
-        client_args["app"] = job.app.value.attr
-
-    async with AsyncClientWrapper(**client_args) as client:
-        for task in job.tasks:
-            if token.is_cancelled:
-                break
-
-            request_args = task.build_request_args()
-            event_hooks = request_args.pop("event_hooks", {"expect": []})
-
-            checker = verifier.Verifier(task.expect or {})
-            event_hooks["expect"].append(checker)
-            result = await client.request(event_hooks, **request_args)
-            print(result)
-
-
-def validate_expect(res: Response, checker):
-    checker(res)
+                checker = verifier.Verifier(task.expect or {})
+                event_hooks["expect"].append(checker)
+                result = await client.request(event_hooks, **request_args)
+                print(result)

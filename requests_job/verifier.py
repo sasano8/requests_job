@@ -160,7 +160,18 @@ class Verifier:
             actual["reason_phrase"] = res.reason_phrase
 
         if "url" in expect:
-            actual["url"] = res.url
+            url = res.url
+            if url:
+                actual["url"] = dict(
+                    url=str(url),
+                    # authority=url.authority,
+                    host=url.host,
+                    port=url.port,
+                    path=url.path,
+                    query=url.query,
+                )  # type: ignore
+            else:
+                actual["url"] = url
 
         if "content" in expect:
             actual["content"] = res.content
@@ -195,8 +206,20 @@ class Verifier:
         if "extensions" in expect:
             actual["extensions"] = res.extensions
 
+        if "history":
+            actual["history"] = res.history
+
         if "elapsed" in expect:
-            actual["elapsed"] = res.elapsed
+            elapsed = res.elapsed
+            actual["elapsed"] = {
+                "total_seconds": elapsed.total_seconds(),
+                "min": elapsed.min,
+                "max": elapsed.max,
+                "days": elapsed.days,
+                "microseconds": elapsed.microseconds,
+                "resolution": elapsed.resolution,
+                "seconds": elapsed.seconds,
+            }
 
         if "raise_for_status" in expect:
             try:

@@ -1,12 +1,12 @@
 ---
 # profile:
 version: 0
-app: tests.mock:app
-# transport:
-#   type: requests_job:ASGITransport
-#   kwargs:
-#     app: tests.mock:app
-#     client: ["127.0.0.1", 123]
+# app: tests.mock:app
+transport:
+  type: requests_job:ASGITransportLifespan
+  kwargs:
+    app: tests.mock:app
+    # client: ["127.0.0.1", 123]
 base_url: http://testserver
 cert:
   type: requests_job.builtins:tuple
@@ -48,75 +48,102 @@ jobs:
   #         json: {}
   - name: test_auth
     tasks:
-      - url: "/auth/basic"
-        expect:
-          status_code: 401
-      - url: "/auth/basic"
-        auth:
-          type: requests.auth:HTTPBasicAuth
-          kwargs: { username: "dummy", password: "password" }
-        expect:
-          status_code: 200
-      - url: "/auth/basic"
-        expect:
-          status_code: 401
-      - url: "/auth/token"
-        method: post
-        data: { username: "dummy", password: "password" }
-        expect:
-          status_code: 200
-      - url: "/post_record"
-        method: post
-        json: { name: "aaa", arr: [1, 2, 3] }
-        expect:
-          raise_for_status: true
-          http_version: HTTP/1.1
-          headers:
-            content-type: application/json
-          cookies: { "a": 1 }
-          status_code: 200
-          json:
-            { name: "aaa", arr: [1, 2, 3, 4], parent: { name: bob, age:20 } }
-        on_success:
-          save: { auth: $.id }
-      - url: "/get_record/{id}"
-        kwargs:
-          id: 1
-        expect:
-          status_code: 200
-      - url: "/auth/basic"
-        expect:
-          status_code: 401
-      # - url: "http://localhost:8000"
+      # - url: "/auth/basic"
       #   expect:
-      #     code: 200
-      #     json: { name: 1 }
-      #   on_execute:
-      #     print: {}
+      #     status_code: 401
+      # - url: "/auth/basic"
+      #   auth:
+      #     type: requests.auth:HTTPBasicAuth
+      #     kwargs: { username: "dummy", password: "password" }
+      #   expect:
+      #     status_code: 200
+      # - url: "/auth/basic"
+      #   expect:
+      #     status_code: 401
+      # - url: "/auth/token"
+      #   method: post
+      #   data: { username: "dummy", password: "password" }
+      #   expect:
+      #     status_code: 200
+      # - url: "/post_record"
+      #   method: post
+      #   json: { name: "aaa", arr: [1, 2, 3] }
+      #   expect:
+      #     raise_for_status: true
+      #     http_version: HTTP/1.1
+      #     headers:
+      #       content-type: application/json
+      #     cookies: { "a": 1 }
+      #     status_code: 200
+      #     json:
+      #       { name: "aaa", arr: [1, 2, 3, 4], parent: { name: bob, age:20 } }
       #   on_success:
-      #     print: {}
-      #     save:
-      #       { name: auth, age: auth, name2: auth, name3: auth, name4: auth }
-      - url: "/file"
+      #     save: { auth: $.id }
+      # - url: "/get_record/{id}"
+      #   kwargs:
+      #     id: 1
+      #   expect:
+      #     status_code: 200
+      # - url: "/auth/basic"
+      #   expect:
+      #     status_code: 401
+      # # - url: "http://localhost:8000"
+      # #   expect:
+      # #     code: 200
+      # #     json: { name: 1 }
+      # #   on_execute:
+      # #     print: {}
+      # #   on_success:
+      # #     print: {}
+      # #     save:
+      # #       { name: auth, age: auth, name2: auth, name3: auth, name4: auth }
+      # - url: "/file"
+      #   method: post
+      #   files:
+      #     - key: file
+      #       # name: sample.txt # nameは受け付けない？？
+      #       path: tests/mock/files/sample_1.txt
+      #   expect:
+      #     status_code: 200
+      #     text: "this is sample 1."
+
+      # - url: /file/upload_multiple
+      #   method: post
+      #   files:
+      #     - key: files
+      #       path: tests/mock/files/sample_1.txt
+      #     - key: files
+      #       path: tests/mock/files/sample_2.txt
+      #   expect:
+      #     json:
+      #       [
+      #         { "name": "sample_1.txt", "content": "this is sample 1." },
+      #         { "name": "sample_2.txt", "content": "this is sample 2." },
+      #       ]
+      - url: /wait
         method: post
-        files:
-          - key: file
-            # name: sample.txt # nameは受け付けない？？
-            path: tests/mock/files/sample_1.txt
+        params:
+          name: bob
+          age: 20
+        json:
+          wait: 1
         expect:
           status_code: 200
-          text: "this is sample 1."
-
-      - url: /file/upload_multiple
-        method: post
-        files:
-          - key: files
-            path: tests/mock/files/sample_1.txt
-          - key: files
-            path: tests/mock/files/sample_2.txt
-        expect:
-          json:
-            [
-              { "name": "sample_1.txt", "content": "this is sample 1." },
-              { "name": "sample_2.txt", "content": "this is sample 2." },
-            ]
+          url:
+            {
+              url: aaaaaaaa,
+              scheme: http,
+              authority: ddd,
+              host: localhost,
+              port: 3333,
+              path: 222,
+              query: 2222,
+            }
+          # elapsed:
+          #   total_seconds: 1
+          #   min: 4
+          #   max: 5
+          #   days: 3
+          #   microseconds: 3
+          #   resolution: 4
+          #   seconds: 4

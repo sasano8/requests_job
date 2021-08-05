@@ -1,0 +1,17 @@
+a: ${USER:2}
+b: ${EXAMPLE_B:1}
+admin: &admin
+  user: admin
+  pass: adminpass
+arr:
+  - &satou
+    user: satou
+    pass: 20
+  - &suzuki
+    user: suzuki
+    pass: 43
+  - <<: *admin
+roommate:
+  - *satou
+  - *suzuki
+  - *admin

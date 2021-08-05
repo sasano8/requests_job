@@ -1,36 +1,63 @@
-from typing import Union
-
-from pydantic import validate_arguments
-
 from .schemas import Profile
 
+__all__ = ["parse_file", "parse_str"]
 
-def load_profile(path: str):
+
+def parse_file(path: str, extension: str = None, deserializer: str = None):
+    return _parse_file(path=path, extension=extension, deserializer=deserializer)
+
+
+def parse_str(content: str, extension: str = None, deserializer: str = None):
+    return _parse_str(content, extension=extension, deserializer=deserializer)
+
+
+def _parse_file(path: str, extension: str = None, deserializer: str = None):
+    if not extension in {"yml", "json", "json5", "jsonc", "hjson", None}:
+        raise ValueError(f"Invalid extension: {extension}")
+
     with open(path, "r") as f:
-        return loads(f)
+        content = f.read()
+
+    return _parse_str(content, extension=extension, deserializer=deserializer)
 
 
-def loads(json):
-    return load_yaml(json)
+def _parse_str(content: str, extension: str = None, deserializer: str = None):
+    if not extension:
+        pass
+    elif extension == "yaml" or extension == "yml":
+        return parse_yaml(content)
+    elif extension == "json":
+        return parse_json(content)
+    else:
+        raise ValueError(f"Invalid extension: {extension}")
+
+    loaders = [parse_yaml, parse_json]
+
+    errors = []
+
+    undefined = object()
+    config = undefined
+
+    for loader in loaders:
+        try:
+            config = loader(content)
+            break
+        except Exception as e:
+            errors.append(e)
+
+    if config is undefined:
+        raise RuntimeError(errors)
+
+    return config
 
 
-def load_yaml(file):
+def parse_yaml(content: str):
     import yaml
 
-    config = yaml.safe_load(file)
-    return parse(config)
+    return yaml.safe_load(content)
 
 
-def load_json(file):
+def parse_json(content: str):
     import json
 
-    config = json.loads(file)
-    return parse(config)
-
-
-@validate_arguments
-def parse(profile: Union[dict, Profile]) -> Profile:
-    if isinstance(profile, dict):
-        profile = Profile(**profile)
-
-    return profile
+    return json.loads(content)

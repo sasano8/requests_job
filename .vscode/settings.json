@@ -1,6 +1,5 @@
 {
-  "python.pythonPath": ".venv/bin/python3",
-  // "python.pythonPath": "${workspaceFolder}/.venv",
+  "defaultInterpreterPath": ".venv/bin/python3",
   "editor.formatOnSave": true,
   "python.linting.lintOnSave": true,
   "python.linting.enabled": true,

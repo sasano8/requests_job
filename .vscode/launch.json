@@ -3,6 +3,13 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Tests",
+      "type": "python",
+      "request": "test",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
       "name": "Python: uvicorn debug",
       "type": "python",
       "request": "launch",
@@ -12,7 +19,7 @@
         "--reload",
         "--port=8000",
       ],
-      "justMyCode": false // 外部ライブラリ等もデバッグする
+      "justMyCode": true // 外部ライブラリ等もデバッグする
     }
   ]
 }

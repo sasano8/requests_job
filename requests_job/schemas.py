@@ -21,6 +21,24 @@ from .values import (
 
 JsonTypes = Union[None, str, int, float, bool, dict, list]
 YamlTypes = Union[None, str, int, float, bool, dict, list, datetime, date]
+ExtensionTypes = Literal["yml", "json", "json5", "jsonc", "hjson"]
+
+
+class ProfilePath(BaseModel):
+    path: FilePath
+    type: Union[Literal["yaml", "yml", "json", "json5", "jsonc", "hjson"], None] = None
+
+    @validator("path", pre=True)
+    def exists_path(cls, v):
+        if v is None:
+            return None
+
+        if not isinstance(v, str):
+            v = FilePath(v)
+
+        if not v.exists():
+            raise ValueError(f"{v} does not exist")
+        return v
 
 
 class Limits(BaseModel):
@@ -114,6 +132,15 @@ class Client(BaseModel):
             )
         return v
 
+    @validator("app")
+    def app_to_transport(cls, v):
+        if v is None:
+            return None
+
+        raise ValueError(
+            f"app not supported. use ASGITransportLifespan instead of app."
+        )
+
 
 class Request(BaseModel):
     url: FString = FString("")
@@ -160,6 +187,7 @@ class Task(Request, Extension):
     def merge_kwargs(cls, values):
         url: FString = values["url"]
         kwargs = values.get("kwargs", {})
+        kwargs = kwargs or {}  # None対策
         params = values.get("params", None)
         if not url.keywords and params is None and kwargs is None:
             return values
@@ -176,7 +204,7 @@ class Task(Request, Extension):
 
         values["url"] = FString(new_url)
         values["params"] = new_params
-        values.pop("kwargs", None)
+        values["kwargs"] = None
         return values
 
     @staticmethod
