@@ -17,7 +17,6 @@ from pydantic import HttpUrl
 from pydantic import HttpUrl as HttpUrlBase
 from pydantic import PrivateAttr, validator
 from pydantic.generics import GenericModel
-from pydantic.utils import update_not_none
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 
 HTTP_BASIC_AUTH = "HTTPBasicAuth"

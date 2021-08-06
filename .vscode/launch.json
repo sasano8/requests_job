@@ -8,18 +8,6 @@
       "request": "test",
       "console": "integratedTerminal",
       "justMyCode": true
-    },
-    {
-      "name": "Python: uvicorn debug",
-      "type": "python",
-      "request": "launch",
-      "module": "uvicorn",
-      "args": [
-        "tests.mock:app",
-        "--reload",
-        "--port=8000",
-      ],
-      "justMyCode": true // 外部ライブラリ等もデバッグする
     }
   ]
 }

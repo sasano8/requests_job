@@ -130,104 +130,148 @@ def is_same_type(actual, expect):
     return True
 
 
+class GetterBase:
+    def __init_subclass__(cls, **kwargs):
+        attrs = [x for x in dir(cls) if x.startswith("get_")]
+        names = {x.lstrip("get_"): x for x in attrs}
+        functions = {k: getattr(cls, v) for k, v in names.items()}
+        cls.getters = functions  # type: ignore
+
+    @classmethod
+    def create_actual(cls, res, expect: dict):
+        actual = {}
+        getters = cls.getters
+        for key in expect:
+            getter = getters.get(key, None)
+            if getter:
+                actual[key] = getter(res)
+            else:
+                actual[key] = undefined
+
+        return actual
+
+
+class Getter(GetterBase):
+    @staticmethod
+    def get_status_code(res):
+        return res.status_code
+
+    @staticmethod
+    def get_json(res):
+        try:
+            value = res.json()
+        except JSONDecodeError as e:
+            value = FailJSONDecode.create(str(e), doc=res.text)
+            return value
+
+    @staticmethod
+    def get_headers(res):
+        return {k.lower(): v.lower() for k, v in res.headers.items()}
+
+    @staticmethod
+    def get_http_version(res):
+        return res.http_version
+
+    @staticmethod
+    def get_reason_phrase(res):
+        return res.reason_phrase
+
+    @staticmethod
+    def get_url(res):
+        url = res.url
+        if url:
+            return dict(
+                url=str(url),
+                # authority=url.authority,
+                host=url.host,
+                port=url.port,
+                path=url.path,
+                query=url.query,
+            )
+        else:
+            return url
+
+    @staticmethod
+    def get_content(res):
+        return res.content
+
+    @staticmethod
+    def get_text(res):
+        return res.text
+
+    @staticmethod
+    def get_encoding(res):
+        return res.encoding
+
+    @staticmethod
+    def get_charset_encoding(res):
+        return res.charset_encoding
+
+    @staticmethod
+    def get_is_error(res):
+        return res.is_error
+
+    @staticmethod
+    def get_is_redirect(res):
+        return res.is_redirect
+
+    @staticmethod
+    def get_cookies(res):
+        return res.cookies
+
+    @staticmethod
+    def get_links(res):
+        return res.links
+
+    @staticmethod
+    def get_num_bytes_downloaded(res):
+        return res.num_bytes_downloaded
+
+    @staticmethod
+    def get_request(res):
+        return res.request
+
+    @staticmethod
+    def get_extensions(res):
+        return res.extensions
+
+    @staticmethod
+    def get_history(res):
+        return res.history
+
+    @staticmethod
+    def get_elapsed(res):
+        elapsed = res.elapsed
+        return {
+            "total_seconds": elapsed.total_seconds(),
+            "min": elapsed.min,
+            "max": elapsed.max,
+            "days": elapsed.days,
+            "microseconds": elapsed.microseconds,
+            "resolution": elapsed.resolution,
+            "seconds": elapsed.seconds,
+        }
+
+    @staticmethod
+    def get_raise_for_status(res):
+        try:
+            res.raise_for_status()
+            return False
+        except:
+            return True
+
+
 class Verifier:
+    __getter__ = Getter
+
     def __init__(self, expect):
         self.expect = expect
 
     def __call__(self, res: Response):
-        errors: List[Exception] = []
         expect = self.expect
-        actual = {}
+        actual = Getter.create_actual(res, self.expect)
 
-        if "status_code" in expect:
-            actual["status_code"] = res.status_code
-
-        if "json" in expect:
-            try:
-                actual["json"] = res.json()
-            except JSONDecodeError as e:
-                actual["json"] = FailJSONDecode.create(str(e), doc=res.text)
-
-        if "headers" in expect:
-            actual["headers"] = dict(
-                {k.lower(): v.lower() for k, v in res.headers.items()}
-            )
-
-        if "http_version" in expect:
-            actual["http_version"] = res.http_version
-
-        if "reason_phrase" in expect:
-            actual["reason_phrase"] = res.reason_phrase
-
-        if "url" in expect:
-            url = res.url
-            if url:
-                actual["url"] = dict(
-                    url=str(url),
-                    # authority=url.authority,
-                    host=url.host,
-                    port=url.port,
-                    path=url.path,
-                    query=url.query,
-                )  # type: ignore
-            else:
-                actual["url"] = url
-
-        if "content" in expect:
-            actual["content"] = res.content
-
-        if "text" in expect:
-            actual["text"] = res.text
-
-        if "encoding" in expect:
-            actual["encoding"] = res.encoding
-
-        if "charset_encoding" in expect:
-            actual["charset_encoding"] = res.charset_encoding
-
-        if "is_error" in expect:
-            actual["is_error"] = res.is_error
-
-        if "is_redirect" in expect:
-            actual["is_redirect"] = res.is_redirect
-
-        if "cookies" in expect:
-            actual["cookies"] = dict(res.cookies)
-
-        if "links" in expect:
-            actual["links"] = res.links
-
-        if "num_bytes_downloaded" in expect:
-            actual["num_bytes_downloaded"] = res.num_bytes_downloaded
-
-        if "request" in expect:
-            actual["request"] = res.request
-
-        if "extensions" in expect:
-            actual["extensions"] = res.extensions
-
-        if "history":
-            actual["history"] = res.history
-
-        if "elapsed" in expect:
-            elapsed = res.elapsed
-            actual["elapsed"] = {
-                "total_seconds": elapsed.total_seconds(),
-                "min": elapsed.min,
-                "max": elapsed.max,
-                "days": elapsed.days,
-                "microseconds": elapsed.microseconds,
-                "resolution": elapsed.resolution,
-                "seconds": elapsed.seconds,
-            }
-
-        if "raise_for_status" in expect:
-            try:
-                res.raise_for_status()
-                actual["raise_for_status"] = False
-            except:
-                actual["raise_for_status"] = True
-
+        errors: List[Exception] = []
         for err in compare(actual, expect, "response"):
             errors.append(err)
 
