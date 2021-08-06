@@ -263,6 +263,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    Getting Started
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -502,6 +509,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#getting-started" class="md-nav__link">
+    Getting Started
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -545,82 +559,17 @@ HTTPX
 <p>A 1.0 release is expected to be issued sometime in 2021.</p>
 </div>
 <hr />
-<p>Let's get started...
-こんにちわ</p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">httpx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://www.example.org/&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span>
-<span class="go">&lt;Response [200 OK]&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">status_code</span>
-<span class="go">200</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;content-type&#39;</span><span class="p">]</span>
-<span class="go">&#39;text/html; charset=UTF-8&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="o">.</span><span class="n">text</span>
-<span class="go">&#39;&lt;!doctype html&gt;\n&lt;html&gt;\n&lt;head&gt;\n&lt;title&gt;Example Domain&lt;/title&gt;...&#39;</span>
-</code></pre></div>
-
-<p>Or, using the async API...</p>
-<p><em>Use <a href="https://ipython.readthedocs.io/en/stable/">IPython</a> or Python 3.8+ with <code>python -m asyncio</code> to try this code interactively.</em></p>
-<div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">httpx</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;https://www.example.org/&#39;</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span>
-<span class="go">&lt;Response [200 OK]&gt;</span>
-</code></pre></div>
-
 <h2 id="features">Features</h2>
-<p>HTTPX is a high performance asynchronous HTTP client, that builds on the
-well-established usability of <code>requests</code>, and gives you:</p>
 <ul>
-<li>A broadly <a href="compatibility/">requests-compatible API</a>.</li>
-<li>Standard synchronous interface, but with <a href="async/">async support if you need it</a>.</li>
-<li>HTTP/1.1 <a href="http2/">and HTTP/2 support</a>.</li>
-<li>Ability to make requests directly to <a href="advanced/#calling-into-python-web-apps">WSGI applications</a> or <a href="async/#calling-into-python-web-apps">ASGI applications</a>.</li>
-<li>Strict timeouts everywhere.</li>
-<li>Fully type annotated.</li>
-<li>100% test coverage.</li>
-</ul>
-<p>Plus all the standard features of <code>requests</code>...</p>
-<ul>
-<li>International Domains and URLs</li>
-<li>Keep-Alive &amp; Connection Pooling</li>
-<li>Sessions with Cookie Persistence</li>
-<li>Browser-style SSL Verification</li>
-<li>Basic/Digest Authentication</li>
-<li>Elegant Key/Value Cookies</li>
-<li>Automatic Decompression</li>
-<li>Automatic Content Decoding</li>
-<li>Unicode Response Bodies</li>
-<li>Multipart File Uploads</li>
-<li>HTTP(S) Proxy Support</li>
-<li>Connection Timeouts</li>
-<li>Streaming Downloads</li>
-<li>.netrc Support</li>
-<li>Chunked Requests</li>
+<li>httpxのapiに基づいたリクエストの一括管理</li>
+<li>レスポンスの検証</li>
+<li>テストとバッチ処理支援</li>
 </ul>
 <h2 id="documentation">Documentation</h2>
-<p>For a run-through of all the basics, head over to the <a href="quickstart/">QuickStart</a>.</p>
-<p>For more advanced topics, see the <a href="advanced/">Advanced Usage</a> section,
-the <a href="async/">async support</a> section, or the <a href="http2/">HTTP/2</a> section.</p>
-<p>The <a href="api/">Developer Interface</a> provides a comprehensive API reference.</p>
-<p>To find out about tools that integrate with HTTPX, see <a href="third_party_packages/">Third Party Packages</a>.</p>
 <h2 id="dependencies">Dependencies</h2>
-<p>The HTTPX project relies on these excellent libraries:</p>
 <ul>
-<li><code>httpcore</code> - The underlying transport implementation for <code>httpx</code>.</li>
-<li><code>h11</code> - HTTP/1.1 support.</li>
-<li><code>h2</code> - HTTP/2 support. <em>(Optional)</em></li>
-<li><code>certifi</code> - SSL certificates.</li>
-<li><code>rfc3986</code> - URL parsing &amp; normalization.</li>
-<li><code>idna</code> - Internationalized domain name support.</li>
-<li><code>sniffio</code> - Async library autodetection.</li>
-<li><code>async_generator</code> - Backport support for <code>contextlib.asynccontextmanager</code>. <em>(Only required for Python 3.6)</em></li>
-<li><code>brotlicffi</code> - Decoding for "brotli" compressed responses. <em>(Optional)</em></li>
+<li><code>httpx</code></li>
 </ul>
-<p>A huge amount of credit is due to <code>requests</code> for the API layout that
-much of this work follows, as well as to <code>urllib3</code> for plenty of design
-inspiration around the lower-level networking details.</p>
 <h2 id="installation">Installation</h2>
 <p>Install with pip:</p>
 <div class="highlight"><pre><span></span><code>$ pip install httpx
@@ -635,6 +584,15 @@ inspiration around the lower-level networking details.</p>
 </code></pre></div>
 
 <p>HTTPX requires Python 3.6+</p>
+<h1 id="getting-started">Getting Started</h1>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">mink</span>
+
+<span class="n">jobs</span> <span class="o">=</span> <span class="n">mink</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;sample.yml&quot;</span><span class="p">)</span>
+<span class="n">jobs</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;production&quot;</span><span class="p">,</span> <span class="s2">&quot;daily&quot;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">jobs</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;15&quot;</span><span class="p">})</span>
+
+<span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
                 
               
               
