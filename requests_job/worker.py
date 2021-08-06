@@ -19,17 +19,13 @@ class HttpxJob:
         self.profile = profile
 
     @classmethod
-    def parse_file(cls, path: str, extension: str = None, deserializer: str = None):
-        dic = cls.parser.parse_file(
-            path=path, extension=extension, deserializer=deserializer
-        )
+    def parse_file(cls, path: str):
+        dic = cls.parser.parse_file(path=path)
         return cls.parse_dict(dic)
 
     @classmethod
-    def parse_str(cls, content: str, extension: str = None, deserializer: str = None):
-        dic = cls.parser.parse_str(
-            content=content, extension=extension, deserializer=deserializer
-        )
+    def parse_str(cls, content: str):
+        dic = cls.parser.parse_str(content=content)
         return cls.parse_dict(dic)
 
     @classmethod

@@ -33,93 +33,21 @@ HTTPX is a fully featured HTTP client for Python 3, which provides sync and asyn
 
 ---
 
-Let's get started...
-こんにちわ
-```pycon
->>> import httpx
->>> r = httpx.get('https://www.example.org/')
->>> r
-<Response [200 OK]>
->>> r.status_code
-200
->>> r.headers['content-type']
-'text/html; charset=UTF-8'
->>> r.text
-'<!doctype html>\n<html>\n<head>\n<title>Example Domain</title>...'
-```
 
-Or, using the async API...
-
-_Use [IPython](https://ipython.readthedocs.io/en/stable/) or Python 3.8+ with `python -m asyncio` to try this code interactively._
-
-```pycon
->>> import httpx
->>> async with httpx.AsyncClient() as client:
-...     r = await client.get('https://www.example.org/')
-...
->>> r
-<Response [200 OK]>
-```
 
 ## Features
 
-HTTPX is a high performance asynchronous HTTP client, that builds on the
-well-established usability of `requests`, and gives you:
-
-* A broadly [requests-compatible API](compatibility.md).
-* Standard synchronous interface, but with [async support if you need it](async.md).
-* HTTP/1.1 [and HTTP/2 support](http2.md).
-* Ability to make requests directly to [WSGI applications](advanced.md#calling-into-python-web-apps) or [ASGI applications](async.md#calling-into-python-web-apps).
-* Strict timeouts everywhere.
-* Fully type annotated.
-* 100% test coverage.
-
-Plus all the standard features of `requests`...
-
-* International Domains and URLs
-* Keep-Alive & Connection Pooling
-* Sessions with Cookie Persistence
-* Browser-style SSL Verification
-* Basic/Digest Authentication
-* Elegant Key/Value Cookies
-* Automatic Decompression
-* Automatic Content Decoding
-* Unicode Response Bodies
-* Multipart File Uploads
-* HTTP(S) Proxy Support
-* Connection Timeouts
-* Streaming Downloads
-* .netrc Support
-* Chunked Requests
+- httpxのapiに基づいたリクエストの一括管理
+- レスポンスの検証
+- テストとバッチ処理支援
 
 ## Documentation
 
-For a run-through of all the basics, head over to the [QuickStart](quickstart.md).
 
-For more advanced topics, see the [Advanced Usage](advanced.md) section,
-the [async support](async.md) section, or the [HTTP/2](http2.md) section.
-
-The [Developer Interface](api.md) provides a comprehensive API reference.
-
-To find out about tools that integrate with HTTPX, see [Third Party Packages](third_party_packages.md).
 
 ## Dependencies
 
-The HTTPX project relies on these excellent libraries:
-
-* `httpcore` - The underlying transport implementation for `httpx`.
-  * `h11` - HTTP/1.1 support.
-  * `h2` - HTTP/2 support. *(Optional)*
-* `certifi` - SSL certificates.
-* `rfc3986` - URL parsing & normalization.
-  * `idna` - Internationalized domain name support.
-* `sniffio` - Async library autodetection.
-* `async_generator` - Backport support for `contextlib.asynccontextmanager`. *(Only required for Python 3.6)*
-* `brotlicffi` - Decoding for "brotli" compressed responses. *(Optional)*
-
-A huge amount of credit is due to `requests` for the API layout that
-much of this work follows, as well as to `urllib3` for plenty of design
-inspiration around the lower-level networking details.
+- `httpx`
 
 ## Installation
 
@@ -144,3 +72,17 @@ $ pip install httpx[brotli]
 HTTPX requires Python 3.6+
 
 [sync-support]: https://github.com/encode/httpx/issues/572
+
+
+# Getting Started
+
+```python
+import mink
+
+jobs = mink.load("sample.yml")
+jobs = jobs.filter(tags=["production", "daily"], name=lambda x: "" in x)
+jobs = jobs.tasks.filter(tags={"15"})
+
+jobs.run()
+
+```

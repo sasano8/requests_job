@@ -14,7 +14,6 @@ from typing import (
 
 from pydantic import BaseModel, Field, FilePath
 from pydantic import HttpUrl
-from pydantic import HttpUrl as HttpUrlBase
 from pydantic import PrivateAttr, validator
 from pydantic.generics import GenericModel
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth

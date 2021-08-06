@@ -1,0 +1,30 @@
+import yaml
+import pytest
+
+
+def test_yaml_spec():
+    result = yaml.dump({"root": tuple([1, 2])})
+    content = "root: !!python/tuple\n- 1\n- 2\n"
+    assert result == "root: !!python/tuple\n- 1\n- 2\n"
+
+    # タグで独自型を読み込むのは脆弱性につながるため非推奨
+    with pytest.raises(yaml.constructor.ConstructorError):
+        yaml.safe_load(result)
+
+    from yaml.loader import Loader
+
+    result = yaml.load(content, Loader=Loader)
+    result == {"root": tuple([1, 2])}
+
+
+def test_parser():
+    from requests_job.parser import Parser
+
+    content = "root: !!python/tuple\n- 1\n- 2\n"
+    result = Parser.parse_str(content)
+    assert result == {"root": tuple([1, 2])}
+
+    content = "${PATH}"
+    result = Parser.parse_str(content)
+    assert result != "${PATH}"
+    assert result
