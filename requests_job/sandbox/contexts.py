@@ -3,9 +3,7 @@ from copy import deepcopy
 from types import MappingProxyType
 from typing import Any, Callable, Union
 
-from ..values import undefined
-
-# from ..utils import EvalStr
+from ..types import undefined
 from .builtins_data import eval_builtins, eval_extend
 
 

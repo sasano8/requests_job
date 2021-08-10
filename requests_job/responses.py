@@ -2,7 +2,7 @@ from typing import Any, Mapping, Sequence, Union
 
 from httpx import Response
 
-from .values import undefined
+from .types import undefined
 
 JSON = Mapping[str, Any]
 JsonTypes = Union[None, str, int, float, bool, Mapping, list]

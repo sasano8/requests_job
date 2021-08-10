@@ -16,6 +16,8 @@ from pydantic import BaseModel, Field, FilePath, HttpUrl, PrivateAttr, validator
 from pydantic.generics import GenericModel
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 
+from .types import undefined
+
 HTTP_BASIC_AUTH = "HTTPBasicAuth"
 HTTP_DIGEST_AUTH = "HTTPDigestAuth"
 HTTP_PROXY_AUTH = "HTTPProxyAuth"
@@ -27,13 +29,6 @@ auth_types = {
 }
 
 T = TypeVar("T")
-
-
-class Undefined:
-    pass
-
-
-undefined = Undefined()
 
 
 class ValueObject(GenericModel, Generic[T]):

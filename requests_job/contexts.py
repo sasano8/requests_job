@@ -1,6 +1,6 @@
 from types import MappingProxyType
 
-from .values import undefined
+from .types import undefined
 
 
 class Env(dict):
