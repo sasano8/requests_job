@@ -1,9 +1,7 @@
 import re
-from typing import Callable, Dict
+from typing import Dict
 
 import yaml
-
-from ..sandbox import EvalStr
 
 # https://gihyo.jp/dev/serial/01/yaml_library/0001
 
@@ -37,22 +35,6 @@ from ..sandbox import EvalStr
 # イベントを文字列します。
 
 
-# class EvalStr(str):
-#     pass
-
-
-class RefStr(str):
-    pass
-
-
-class TypeStr(str):
-    pass
-
-
-class AppDumper(yaml.Dumper):
-    pass
-
-
 def constructor(tag):
     def wrapper(func):
         func.__constructor__ = tag
@@ -68,11 +50,17 @@ def extract_constructors(cls):
 
 
 class LoaderBase(yaml.Loader):
-    Dumper = AppDumper
+    Dumper = None
     RESOLVERS: Dict[str, re.Pattern] = {}
 
     def __init_subclass__(cls) -> None:
-        # add_implicit_resolvers(cls, cls.RESOLVERS)
+        if cls.Dumper is None:
+
+            class Dumper(yaml.Dumper):
+                pass
+
+            cls.Dumper = Dumper
+
         for tag, regexp in cls.RESOLVERS.items():
             yaml.add_implicit_resolver(
                 tag=tag,
@@ -85,36 +73,3 @@ class LoaderBase(yaml.Loader):
         funcs = extract_constructors(cls)
         for tag, func in funcs.items():
             yaml.add_constructor(tag=tag, constructor=func, Loader=cls)
-
-
-class AppLoader(LoaderBase):
-    Dumper = AppDumper
-    PATTERN_ENV = re.compile(r"\$\{(.*)\}")
-    RESOLVERS = {"!env_var": PATTERN_ENV}
-
-    @classmethod
-    @constructor("!env_var")
-    def constructor_env_var(cls, loader, node):
-        value = loader.construct_scalar(node)
-
-        matched = cls.PATTERN_ENV.match(value)
-        if matched is None:
-            return value
-        proto = matched.group(1)
-        return EvalStr(proto)
-
-    @classmethod
-    @constructor("!ref")
-    def constructor_ref(cls, loader, node):
-        value = loader.construct_scalar(node)
-        if value is None:
-            value = ""
-        return RefStr(value)
-
-    @classmethod
-    @constructor("!call")
-    def constructor_call(cls, loader, node):
-        value = loader.construct_scalar(node)
-        if value is None:
-            value = ""
-        return TypeStr(value)

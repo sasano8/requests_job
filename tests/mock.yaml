@@ -134,7 +134,7 @@ jobs:
         json:
           wait: 1
         expect:
-          status_code: 200
+          status_code: ${{ 200 <= x and x < 300 }}
           url:
             {
               url: aaaaaaaa,

@@ -3,6 +3,12 @@ from functools import wraps
 import pytest
 
 from requests_job import undefined
+from requests_job.sandbox import Engine
+
+
+@pytest.fixture
+def empty_engine():
+    return Engine()
 
 
 def assert_exception(func):
@@ -104,18 +110,15 @@ def get_case_for_test_eval_builtins():
     get_case_for_test_eval_builtins(),
 )
 @assert_exception
-def test_eval_builtins(src, expect):
-    from requests_job.sandbox import Engine
-
-    engine = Engine()
-    assert engine.eval(src) == expect
+def test_eval_builtins(src, expect, empty_engine):
+    assert empty_engine.eval(src) == expect
 
 
-def test_evalue_obj():
+def test_evalue_obj(empty_engine):
     from requests_job import undefined
-    from requests_job.sandbox import Engine, EvalStr
+    from requests_job.sandbox import EvalStr
 
-    engine = Engine()
+    engine = empty_engine
     evalute_recursive = engine.evalute_recursive
 
     assert 1 == evalute_recursive(1, {})
@@ -142,19 +145,6 @@ def test_evalue_obj():
     )
 
 
-def test_evalute_environ():
-    import os
-
-    from requests_job.sandbox import Engine, EvalStr
-
-    os.environ["TEST_CONTEXT"] = "abc"
-
-    engine = Engine({"env": os.environ})
-    evalute_recursive = engine.evalute_recursive
-
-    assert "abc" == evalute_recursive(EvalStr("env['TEST_CONTEXT']"))
-
-
 @pytest.mark.parametrize(
     "src, expect",
     [
@@ -169,11 +159,23 @@ def test_evalute_environ():
         ("{2}", set([2])),
     ],
 )
-def test_context(src, expect):
+def test_context(src, expect, empty_engine):
     from requests_job.sandbox import Engine
 
-    engine = Engine()
-    assert engine.eval(src) == expect
+    assert empty_engine.eval(src) == expect
+
+
+def test_evalute_environ():
+    import os
+
+    from requests_job.sandbox import Engine, EvalStr
+
+    os.environ["TEST_CONTEXT"] = "abc"
+
+    engine = Engine({"env": os.environ})
+    evalute_recursive = engine.evalute_recursive
+
+    assert "abc" == evalute_recursive(EvalStr("env['TEST_CONTEXT']"))
 
 
 @pytest.mark.parametrize(
