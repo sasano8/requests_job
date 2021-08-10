@@ -42,6 +42,8 @@
     
       <link rel="stylesheet" href="../css/custom.css">
     
+      <link rel="stylesheet" href="https://unpkg.com/mermaid@8.0.0/dist/mermaid.css">
+    
     
       
 
@@ -658,19 +660,16 @@ that demonstrates the issue.</p>
 your GitHub username:</p>
 <div class="highlight"><pre><span></span><code>$ git clone https://github.com/YOUR-USERNAME/httpx
 </code></pre></div>
-
 <p>You can now install the project and its dependencies using:</p>
 <div class="highlight"><pre><span></span><code>$ <span class="nb">cd</span> httpx
 $ scripts/install
 </code></pre></div>
-
 <h2 id="testing-and-linting">Testing and Linting</h2>
 <p>We use custom shell scripts to automate testing, linting,
 and documentation building workflow.</p>
 <p>To run the tests, use:</p>
 <div class="highlight"><pre><span></span><code>$ scripts/test
 </code></pre></div>
-
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>The test suite spawns testing servers on ports <strong>8000</strong> and <strong>8001</strong>.
@@ -680,21 +679,17 @@ Make sure these are not in use, so the tests can run properly.</p>
 <p>For example, to run a single test script:</p>
 <div class="highlight"><pre><span></span><code>$ scripts/test tests/test_multipart.py
 </code></pre></div>
-
 <p>To run the code auto-formatting:</p>
 <div class="highlight"><pre><span></span><code>$ scripts/lint
 </code></pre></div>
-
 <p>Lastly, to run code checks separately (they are also run as part of <code>scripts/test</code>), run:</p>
 <div class="highlight"><pre><span></span><code>$ scripts/check
 </code></pre></div>
-
 <h2 id="documenting">Documenting</h2>
 <p>Documentation pages are located under the <code>docs/</code> folder.</p>
 <p>To run the documentation site locally (useful for previewing changes), use:</p>
 <div class="highlight"><pre><span></span><code>$ scripts/docs
 </code></pre></div>
-
 <h2 id="resolving-build-ci-failures">Resolving Build / CI Failures</h2>
 <p>Once you've submitted your pull request, the test suite will automatically run, and the results will show up in GitHub.
 If the test suite fails, you'll want to click through to the "Details" link, and try to identify why the test suite failed.</p>
@@ -712,7 +707,6 @@ If the test suite fails, you'll want to click through to the "Details" link, and
 You can look at the job output to figure out why it's failed or within a shell run:</p>
 <div class="highlight"><pre><span></span><code>$ scripts/check
 </code></pre></div>
-
 <p>It may be worth it to run <code>$ scripts/lint</code> to attempt auto-formatting the code
 and if that job succeeds commit the changes.</p>
 <h3 id="docs-job-failed">Docs Job Failed</h3>
@@ -784,23 +778,21 @@ configure HTTPX as described in the
 <a href="https://www.python-httpx.org/advanced/#http-proxying">proxy section</a> and
 the <a href="https://www.python-httpx.org/advanced/#ssl-certificates">SSL certificates section</a>,
 this is where our previously generated <code>client.pem</code> comes in:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">httpx</span>
+<div class="highlight"><pre><span></span><code>import httpx
 
-<span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;all&quot;</span><span class="p">:</span> <span class="s2">&quot;http://127.0.0.1:8080/&quot;</span><span class="p">}</span>
+proxies = {&quot;all&quot;: &quot;http://127.0.0.1:8080/&quot;}
 
-<span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">proxies</span><span class="o">=</span><span class="n">proxies</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="s2">&quot;/path/to/client.pem&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://example.org&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>  <span class="c1"># should print 200</span>
+with httpx.Client(proxies=proxies, verify=&quot;/path/to/client.pem&quot;) as client:
+    response = client.get(&quot;https://example.org&quot;)
+    print(response.status_code)  # should print 200
 </code></pre></div>
-
 <p>Note, however, that HTTPS requests will only succeed to the host specified
 in the SSL/TLS certificate we generated, HTTPS requests to other hosts will
 raise an error like:</p>
-<div class="highlight"><pre><span></span><code><span class="nv">ssl</span>.<span class="nv">SSLCertVerificationError</span>: [<span class="nv">SSL</span>: <span class="nv">CERTIFICATE_VERIFY_FAILED</span>] <span class="nv">certificate</span>
-<span class="nv">verify</span> <span class="nv">failed</span>: <span class="nv">Hostname</span> <span class="nv">mismatch</span>, <span class="nv">certificate</span> <span class="nv">is</span> <span class="nv">not</span> <span class="nv">valid</span> <span class="k">for</span>
-<span class="s1">&#39;</span><span class="s">duckduckgo.com</span><span class="s1">&#39;</span>. <span class="ss">(</span><span class="nv">_ssl</span>.<span class="nv">c</span>:<span class="mi">1108</span><span class="ss">)</span>
+<div class="highlight"><pre><span></span><code>ssl.SSLCertVerificationError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate
+verify failed: Hostname mismatch, certificate is not valid for
+&#39;duckduckgo.com&#39;. (_ssl.c:1108)
 </code></pre></div>
-
 <p>If you want to make requests to more hosts you'll need to regenerate the
 certificates and include all the hosts you intend to connect to in the
 seconds step, i.e.</p>
@@ -879,6 +871,8 @@ seconds step, i.e.</p>
     
     
       <script src="../assets/javascripts/bundle.2b46852b.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.0.0/dist/mermaid.min.js"></script>
       
         <script src="../js/chat.js"></script>
       

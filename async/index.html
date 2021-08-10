@@ -42,6 +42,8 @@
     
       <link rel="stylesheet" href="../css/custom.css">
     
+      <link rel="stylesheet" href="https://unpkg.com/mermaid@8.0.0/dist/mermaid.css">
+    
     
       
 
@@ -701,7 +703,6 @@ async client for sending outgoing HTTP requests.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">r</span>
 <span class="go">&lt;Response [200 OK]&gt;</span>
 </code></pre></div>
-
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Use <a href="https://ipython.readthedocs.io/en/stable/">IPython</a> or Python 3.8+ with <code>python -m asyncio</code> to try this code interactively, as they support executing <code>async</code>/<code>await</code> expressions in the console.</p>
@@ -727,13 +728,11 @@ use async methods.</p>
 <div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="o">...</span>
 </code></pre></div>
-
 <p>Alternatively, use <code>await client.aclose()</code> if you want to close a client explicitly:</p>
 <div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">()</span>
 <span class="o">...</span>
 <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
 </code></pre></div>
-
 <h3 id="streaming-responses">Streaming responses</h3>
 <p>The <code>AsyncClient.stream(method, url, ...)</code> method is an async context block.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">()</span>
@@ -741,7 +740,6 @@ use async methods.</p>
 <span class="gp">... </span>    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">response</span><span class="o">.</span><span class="n">aiter_bytes</span><span class="p">():</span>
 <span class="gp">... </span>        <span class="o">...</span>
 </code></pre></div>
-
 <p>The async response streaming methods are:</p>
 <ul>
 <li><code>Response.aread()</code> - For conditionally reading a response inside a stream block.</li>
@@ -764,7 +762,6 @@ use async methods.</p>
     <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">req</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">StreamingResponse</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">aiter_text</span><span class="p">(),</span> <span class="n">background</span><span class="o">=</span><span class="n">BackgroundTask</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">aclose</span><span class="p">))</span>
 </code></pre></div>
-
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>When using this "manual streaming mode", it is your duty as a developer to make sure that <code>Response.aclose()</code> is called eventually. Failing to do so would leave connections open, most likely resulting in resource leaks down the line.</p>
@@ -776,7 +773,6 @@ use async methods.</p>
 
 <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">upload_bytes</span><span class="p">())</span>
 </code></pre></div>
-
 <h3 id="explicit-transport-instances">Explicit transport instances</h3>
 <p>When instantiating a transport instance directly, you need to use <code>httpx.AsyncHTTPTransport</code>.</p>
 <p>For instance:</p>
@@ -785,7 +781,6 @@ use async methods.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="o">...</span>
 </code></pre></div>
-
 <h2 id="supported-async-environments">Supported async environments</h2>
 <p>HTTPX supports either <code>asyncio</code> or <code>trio</code> as an async environment.</p>
 <p>It will auto-detect which of those two to use as the backend
@@ -803,7 +798,6 @@ for writing concurrent code with the async/await syntax.</p>
 
 <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
 </code></pre></div>
-
 <h3 id="trio"><a href="https://github.com/python-trio/trio">Trio</a></h3>
 <p>Trio is <a href="https://trio.readthedocs.io/en/stable/">an alternative async library</a>,
 designed around the <a href="https://en.wikipedia.org/wiki/Structured_concurrency">the principles of structured concurrency</a>.</p>
@@ -817,7 +811,6 @@ designed around the <a href="https://en.wikipedia.org/wiki/Structured_concurrenc
 
 <span class="n">trio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
 </code></pre></div>
-
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>The <code>trio</code> package must be installed to use the Trio backend.</p>
@@ -835,7 +828,6 @@ for concurrent Python systems programming.</p>
 
 <span class="n">curio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
 </code></pre></div>
-
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>The <code>curio</code> package must be installed to use the Curio backend.</p>
@@ -852,11 +844,9 @@ for concurrent Python systems programming.</p>
 
 <span class="n">anyio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">,</span> <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;trio&#39;</span><span class="p">)</span>
 </code></pre></div>
-
-<p>When instantiating a transport instance explicitly, for maximum consistency, the same <code>backend</code> parameter can be passed to <code>AsyncHTTPTransport</code>.</p>
+<p>When instantiating a transport instance explicitly, for maximum consistency, the same <code>backend</code> parameter can be passed to <code>AsyncHTTPTransport</code>.
 <div class="highlight"><pre><span></span><code><span class="n">transport</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncHTTPTransport</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s2">&quot;trio&quot;</span><span class="p">)</span>
-</code></pre></div>
-
+</code></pre></div></p>
 <h2 id="calling-into-python-web-apps">Calling into Python Web Apps</h2>
 <p>Just as <code>httpx.Client</code> allows you to call directly into WSGI web applications,
 the <code>httpx.AsyncClient</code> class allows you to call directly into ASGI web applications.</p>
@@ -872,7 +862,6 @@ the <code>httpx.AsyncClient</code> class allows you to call directly into ASGI w
 
 <span class="n">app</span> <span class="o">=</span> <span class="n">Starlette</span><span class="p">(</span><span class="n">routes</span><span class="o">=</span><span class="p">[</span><span class="n">Route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">hello</span><span class="p">)])</span>
 </code></pre></div>
-
 <p>We can make requests directly against the application, like so:</p>
 <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">httpx</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">(</span><span class="n">app</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://testserver&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
@@ -880,7 +869,6 @@ the <code>httpx.AsyncClient</code> class allows you to call directly into ASGI w
 <span class="gp">... </span>    <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span>
 <span class="gp">... </span>    <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;Hello World!&quot;</span>
 </code></pre></div>
-
 <p>For some more complex cases you might need to customise the ASGI transport. This allows you to:</p>
 <ul>
 <li>Inspect 500 error responses rather than raise exceptions by setting <code>raise_app_exceptions=False</code>.</li>
@@ -894,7 +882,6 @@ the <code>httpx.AsyncClient</code> class allows you to call directly into ASGI w
 <span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">(</span><span class="n">transport</span><span class="o">=</span><span class="n">transport</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;http://testserver&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="o">...</span>
 </code></pre></div>
-
 <p>See <a href="https://asgi.readthedocs.io/en/latest/specs/www.html#connection-scope">the ASGI documentation</a> for more details on the <code>client</code> and <code>root_path</code> keys.</p>
 <h2 id="startupshutdown-of-asgi-apps">Startup/shutdown of ASGI apps</h2>
 <p>It is not in the scope of HTTPX to trigger lifespan events of your app.</p>
@@ -973,6 +960,8 @@ the <code>httpx.AsyncClient</code> class allows you to call directly into ASGI w
     
     
       <script src="../assets/javascripts/bundle.2b46852b.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.0.0/dist/mermaid.min.js"></script>
       
         <script src="../js/chat.js"></script>
       

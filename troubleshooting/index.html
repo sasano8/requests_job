@@ -42,6 +42,8 @@
     
       <link rel="stylesheet" href="../css/custom.css">
     
+      <link rel="stylesheet" href="https://unpkg.com/mermaid@8.0.0/dist/mermaid.css">
+    
     
       
 
@@ -527,7 +529,6 @@
 <p><strong>Description</strong>: When using a proxy and making an HTTPS request, you see an exception looking like this:</p>
 <div class="highlight"><pre><span></span><code><span class="go">httpx.ProxyError: _ssl.c:1091: The handshake operation timed out</span>
 </code></pre></div>
-
 <p><strong>Similar issues</strong>: <a href="https://github.com/encode/httpx/issues/1412">encode/httpx#1412</a>, <a href="https://github.com/encode/httpx/issues/1433">encode/httpx#1433</a></p>
 <p><strong>Resolution</strong>: it is likely that you've set up your proxies like this...</p>
 <div class="highlight"><pre><span></span><code><span class="n">proxies</span> <span class="o">=</span> <span class="p">{</span>
@@ -535,7 +536,6 @@
   <span class="s2">&quot;https&quot;</span><span class="p">:</span> <span class="s2">&quot;https://myproxy.org&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
-
 <p>Using this setup, you're telling HTTPX to connect to the proxy using HTTP for HTTP requests, and using HTTPS for HTTPS requests.</p>
 <p>But if you get the error above, it is likely that your proxy doesn't support connecting via HTTPS. Don't worry: that's a <a href="../advanced/#example">common gotcha</a>.</p>
 <p>Change the scheme of your HTTPS proxy to <code>http://...</code> instead of <code>https://...</code>:</p>
@@ -544,18 +544,15 @@
   <span class="s2">&quot;https&quot;</span><span class="p">:</span> <span class="s2">&quot;http://myproxy.org&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 </code></pre></div>
-
 <p>This can be simplified to:</p>
 <div class="highlight"><pre><span></span><code><span class="n">proxies</span> <span class="o">=</span> <span class="s2">&quot;http://myproxy.org&quot;</span>
 </code></pre></div>
-
 <p>For more information, see <a href="../advanced/#forward-vs-tunnel">Proxies: FORWARD vs TUNNEL</a>.</p>
 <hr />
 <h3 id="error-when-making-requests-to-an-https-proxy">Error when making requests to an HTTPS proxy</h3>
 <p><strong>Description</strong>: your proxy <em>does</em> support connecting via HTTPS, but you are seeing errors along the lines of...</p>
 <div class="highlight"><pre><span></span><code><span class="go">httpx.ProxyError: [SSL: PRE_MAC_LENGTH_TOO_LONG] invalid alert (_ssl.c:1091)</span>
 </code></pre></div>
-
 <p><strong>Similar issues</strong>: <a href="https://github.com/encode/httpx/issues/1424">encode/httpx#1424</a>.</p>
 <p><strong>Resolution</strong>: HTTPX does not properly support HTTPS proxies at this time. If that's something you're interested in having, please see <a href="https://github.com/encode/httpx/issues/1434">encode/httpx#1434</a> and consider lending a hand there.</p>
                 
@@ -632,6 +629,8 @@
     
     
       <script src="../assets/javascripts/bundle.2b46852b.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.0.0/dist/mermaid.min.js"></script>
       
         <script src="../js/chat.js"></script>
       

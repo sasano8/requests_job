@@ -42,6 +42,8 @@
     
       <link rel="stylesheet" href="../css/custom.css">
     
+      <link rel="stylesheet" href="https://unpkg.com/mermaid@8.0.0/dist/mermaid.css">
+    
     
       
 
@@ -730,12 +732,10 @@ in order to better separate this usage from the case of uploading form data.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Uploading text, bytes, or a bytes iterator.</span>
 <span class="n">httpx</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">content</span><span class="o">=</span><span class="sa">b</span><span class="s2">&quot;Hello, world&quot;</span><span class="p">)</span>
 </code></pre></div>
-
 <p>And using <code>data=...</code> to send form data:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Uploading form data.</span>
 <span class="n">httpx</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Hello, world&quot;</span><span class="p">})</span>
 </code></pre></div>
-
 <p>Using the <code>data=&lt;text/byte content&gt;</code> will raise a deprecation warning,
 and is expected to be fully removed with the HTTPX 1.0 release.</p>
 <h2 id="content-encoding">Content encoding</h2>
@@ -747,12 +747,10 @@ and is expected to be fully removed with the HTTPX 1.0 release.</p>
 <div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="n">cookies</span><span class="o">=...</span><span class="p">)</span>
 <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 </code></pre></div>
-
 <p>This usage is <strong>not</strong> supported:</p>
 <div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Client</span><span class="p">()</span>
 <span class="n">client</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="o">...</span><span class="p">,</span> <span class="n">cookies</span><span class="o">=...</span><span class="p">)</span>
 </code></pre></div>
-
 <p>We prefer enforcing a stricter API here because it provides clearer expectations around cookie persistence, particularly when redirects occur.</p>
 <h2 id="status-codes">Status Codes</h2>
 <p>In our documentation we prefer the uppercased versions, such as <code>codes.NOT_FOUND</code>, but also provide lower-cased versions for API compatibility with <code>requests</code>.</p>
@@ -763,7 +761,6 @@ and is expected to be fully removed with the HTTPX 1.0 release.</p>
 <div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">request</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">&quot;GET&quot;</span><span class="p">,</span> <span class="s2">&quot;https://www.example.com&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">response</span><span class="p">:</span>
     <span class="o">...</span>
 </code></pre></div>
-
 <p>Within a <code>stream()</code> block request data is made available with:</p>
 <ul>
 <li><code>.iter_bytes()</code> - Instead of <code>response.iter_content()</code></li>
@@ -790,11 +787,9 @@ and is expected to be fully removed with the HTTPX 1.0 release.</p>
 <p>The HTTPX equivalent of <code>requests.Session</code> is <code>httpx.Client</code>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div>
-
 <p>is generally equivalent to</p>
 <div class="highlight"><pre><span></span><code><span class="n">client</span> <span class="o">=</span> <span class="n">httpx</span><span class="o">.</span><span class="n">Client</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </code></pre></div>
-
 <h2 id="request-instantiation">Request instantiation</h2>
 <p>There is no notion of <a href="https://requests.readthedocs.io/en/stable/user/advanced/#prepared-requests">prepared requests</a> in HTTPX. If you need to customize request instantiation, see <a href="../advanced/#request-instances">Request instances</a>.</p>
 <p>Besides, <code>httpx.Request()</code> does not support the <code>auth</code>, <code>timeout</code>, <code>allow_redirects</code>, <code>proxies</code>, <code>verify</code> and <code>cert</code> parameters. However these are available in <code>httpx.request</code>, <code>httpx.get</code>, <code>httpx.post</code> etc., as well as on <a href="../advanced/#client-instances"><code>Client</code> instances</a>.</p>
@@ -817,7 +812,6 @@ In consideration of consistency, we make <code>HEAD</code> follow redirects by d
     <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">allow_redirects</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">request</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">next_request</span>
 </code></pre></div>
-
 <h2 id="event-hooks">Event Hooks</h2>
 <p><code>requests</code> allows event hooks to mutate <code>Request</code> and <code>Response</code> objects. See <a href="https://requests.readthedocs.io/en/master/user/advanced/#event-hooks">examples</a> given in the documentation for <code>requests</code>.</p>
 <p>In HTTPX, event hooks may access properties of requests and responses, but event hook callbacks cannot mutate the original request/response.</p>
@@ -896,6 +890,8 @@ In consideration of consistency, we make <code>HEAD</code> follow redirects by d
     
     
       <script src="../assets/javascripts/bundle.2b46852b.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.0.0/dist/mermaid.min.js"></script>
       
         <script src="../js/chat.js"></script>
       

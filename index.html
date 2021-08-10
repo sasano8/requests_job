@@ -42,6 +42,8 @@
     
       <link rel="stylesheet" href="css/custom.css">
     
+      <link rel="stylesheet" href="https://unpkg.com/mermaid@8.0.0/dist/mermaid.css">
+    
     
       
 
@@ -267,6 +269,47 @@
   <a href="#getting-started" class="md-nav__link">
     Getting Started
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expression" class="md-nav__link">
+    expression
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    設計
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    類似ツール
+  </a>
+  
+    <nav class="md-nav" aria-label="類似ツール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-actions" class="md-nav__link">
+    github actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tavern" class="md-nav__link">
+    tavern
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -516,6 +559,47 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#expression" class="md-nav__link">
+    expression
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    設計
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    類似ツール
+  </a>
+  
+    <nav class="md-nav" aria-label="類似ツール">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#github-actions" class="md-nav__link">
+    github actions
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tavern" class="md-nav__link">
+    tavern
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -574,15 +658,12 @@ HTTPX
 <p>Install with pip:</p>
 <div class="highlight"><pre><span></span><code>$ pip install httpx
 </code></pre></div>
-
 <p>Or, to include the optional HTTP/2 support, use:</p>
 <div class="highlight"><pre><span></span><code>$ pip install httpx<span class="o">[</span>http2<span class="o">]</span>
 </code></pre></div>
-
 <p>To include the optional brotli decoder support, use:</p>
 <div class="highlight"><pre><span></span><code>$ pip install httpx<span class="o">[</span>brotli<span class="o">]</span>
 </code></pre></div>
-
 <p>HTTPX requires Python 3.6+</p>
 <h1 id="getting-started">Getting Started</h1>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">mink</span>
@@ -591,8 +672,155 @@ HTTPX
 <span class="n">jobs</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;production&quot;</span><span class="p">,</span> <span class="s2">&quot;daily&quot;</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
 <span class="n">jobs</span> <span class="o">=</span> <span class="n">jobs</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;15&quot;</span><span class="p">})</span>
 
-<span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">jobs</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">manager</span><span class="p">)</span>
 </code></pre></div>
+<h1 id="expression">expression</h1>
+<ul>
+<li>環境変数が読み込めます　例：　${ENV_NAME}</li>
+<li>環境変数が存在しない場合のデフォルト値を設定できます　例：　${ENV_NAME:DEFAULT_VALUE}</li>
+<li>evalによる複雑な評価を行えます　例：　status_code: !eval 200 &lt;= x and x &lt; 300</li>
+</ul>
+<h1 id="_1">設計</h1>
+<ul>
+<li>
+<p>独自タグ</p>
+<ul>
+<li>yamlのタグ機能で基本型以外も値として定義できます</li>
+<li>ref:  <module>:<attr> | <variable> でpythonオブジェクトを参照することができます</li>
+<li>type:  <module>:<attr> | <variable>  でpythonクラスを指定し初期化できます</li>
+<li>eval: 式を評価することができます。</li>
+</ul>
+</li>
+<li>
+<p>リゾルバ</p>
+<ul>
+<li>環境変数: yamlのパース時に文字列として埋め込まれます。存在しない場合はNoneと解釈されます</li>
+<li>変数: yamlのアンカー等を利用します</li>
+</ul>
+</li>
+</ul>
+<h1 id="_2">類似ツール</h1>
+<h2 id="github-actions">github actions</h2>
+<p>ifでevalを扱うことができる</p>
+<div class="highlight"><pre><span></span><code>    <span class="nt">if</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">${{ secrets.ref == &#39;refs/heads/main&#39; }}</span>
+</code></pre></div>
+<p>github actionsはsecretsと呼ばれるコンテキストに変数を設定し、secretsで変数にアクセスする。
+yamlに展開すると、機密情報がログに出力されてしまったりするので、サンドボックスでのみアクセス可能にするのはいい考えのような気がする</p>
+<h2 id="tavern">tavern</h2>
+<p>saveで変数を保持し、"{val_name:type}"で参照できる</p>
+<div class="highlight"><pre><span></span><code><span class="nt">stages</span><span class="p">:</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Make sure we have the right method</span>
+    <span class="nt">request</span><span class="p">:</span>
+      <span class="nt">url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://kaka-request-dumper.herokuapp.com/</span>
+      <span class="nt">method</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">GET</span>
+      <span class="nt">save</span><span class="p">:</span>
+        <span class="nt">json</span><span class="p">:</span>
+          <span class="nt">returned_method</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">method</span>
+
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Make sure we have the right returned_method</span>
+    <span class="nt">request</span><span class="p">:</span>
+      <span class="nt">url</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">https://kaka-request-dumper.herokuapp.com/</span>
+      <span class="nt">method</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">GET</span>
+      <span class="nt">params</span><span class="p">:</span>
+        <span class="nt">returned_method</span><span class="p">:</span> <span class="s">&quot;{returned_method:s}&quot;</span>
+</code></pre></div>
+<p>includeで共通定義を読み込める</p>
+<div class="highlight"><pre><span></span><code>description: used for github api testing
+name: test includes
+variables:
+  service:
+    token: &quot;token&quot;
+    owner: &quot;リポジトリオーナー&quot;
+    repo: &quot;リポジトリ&quot;
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>includes:
+  - !include common.yaml
+</code></pre></div>
+<p>環境変数展開については記述がない
+pytestで実行でき、pytestで結果を表示できる</p>
+<div class="mermaid">graph TD;
+    A--&gt;B;
+    A--&gt;C;
+    B--&gt;D;
+    C--&gt;D;</div>
+<div class="mermaid">sequenceDiagram
+  ユーザ    -&gt;&gt; +Vue         : ログインボタンクリック
+  Vue      -&gt;&gt; +Laravel     : ログインAPI
+  Laravel  -&gt;&gt; +Database    : SQL
+    Note right of Database  : 認証テーブル参照
+  Database -&gt;&gt; -Laravel     : Result
+  alt ログイン成功
+    Laravel -&gt;&gt; Vue         : success
+  else 失敗
+    Laravel -&gt;&gt; -Vue        : failure
+  end
+  Vue       -&gt;&gt; -ユーザ      : 結果表示</div>
+<div class="mermaid">graph TB
+  Macの選び方 --&gt; 持ち歩く
+  持ち歩く --&gt;|はい| スペック
+  持ち歩く --&gt;|いいえ| 予算
+  スペック --&gt;|必要| R1[MacBook Pro]
+  スペック --&gt;|低くても良い| R2[MacBook Air]
+  予算 --&gt; |いくらでもある| R3[Mac Pro]
+  予算 --&gt; |できれば抑えたい| R4[Mac mini / iMac]</div>
+<div class="mermaid">classDiagram
+  class Loader {
+    -int HP
+  }
+  class Schema {
+    -int HP
+  }
+  class Parser {
+    -parse_file()
+  }
+  class Composer {
+    -parse_file()
+  }
+  class Context {
+    -int HP
+  }
+  class Sandbox {
+    -ファイア()
+  }
+  Composer &lt;|-- Context
+  Composer &lt;|-- Sandbox
+  Composer &lt;|-- Parser
+  Parser &lt;|-- Loader
+  Parser &lt;|-- Schema</div>
+<div class="mermaid">gantt
+  title PHP life cycle
+
+  section PHP 7.2
+    active support      : done, 2017-11-30, 2019-11-30
+    security support     : crit, 2020-11-30
+
+  section PHP7.3
+    active support      : 2018-12-06, 2020-12-06
+    security support     : crit, 2021-12-06
+
+  section PHP7.4
+    active support      : 2019-11-28, 2021-11-28
+    security support     : crit, 2022-11-28
+</div>
+<div class="mermaid">pie
+  "iOS": 45.2
+  "iPhone": 17.2
+  "PHP": 8.6
+  "Objective-C": 6.5
+  "Swift": 6.5
+  "Xcode": 4
+  "Laravel": 3
+  "Realm": 3
+  "Android": 3
+  "Others": 2</div>
+<div class="mermaid">graph TB
+    subgraph s1
+        s1a --&gt; s1b
+    end
+    subgraph s2
+        s2a --&gt; s2b
+        s2a --&gt; s1b
+    end</div>
                 
               
               
@@ -652,6 +880,8 @@ HTTPX
     
     
       <script src="assets/javascripts/bundle.2b46852b.min.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@8.0.0/dist/mermaid.min.js"></script>
       
         <script src="js/chat.js"></script>
       
