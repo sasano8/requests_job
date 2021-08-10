@@ -113,7 +113,10 @@ def test_eval_builtins(src, expect):
 
 def test_evalue_obj():
     from requests_job import undefined
-    from requests_job.sandbox import EvalStr, evalute_recursive
+    from requests_job.sandbox import Engine, EvalStr
+
+    engine = Engine()
+    evalute_recursive = engine.evalute_recursive
 
     assert 1 == evalute_recursive(1, {})
     assert "a" == evalute_recursive("a", {})
@@ -142,12 +145,14 @@ def test_evalue_obj():
 def test_evalute_environ():
     import os
 
-    from requests_job.sandbox import EvalStr, evalute_recursive
+    from requests_job.sandbox import Engine, EvalStr
 
     os.environ["TEST_CONTEXT"] = "abc"
-    assert "abc" == evalute_recursive(
-        EvalStr("env['TEST_CONTEXT']"), {"env": os.environ}
-    )
+
+    engine = Engine({"env": os.environ})
+    evalute_recursive = engine.evalute_recursive
+
+    assert "abc" == evalute_recursive(EvalStr("env['TEST_CONTEXT']"))
 
 
 @pytest.mark.parametrize(
