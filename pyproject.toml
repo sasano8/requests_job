@@ -36,6 +36,7 @@ isort = "^5.9.3"
 mkdocs = "^1.2.2"
 mkautodoc = "^0.1.0"
 mkdocs-material = "^7.2.2"
+pymdown-extensions = "^8.2"
 
 
 [build-system]

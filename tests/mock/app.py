@@ -124,3 +124,8 @@ async def wait_request(wait: float = Body(0, embed=True)):
 
     await asyncio.sleep(wait)
     return None
+
+
+@app.post("/yaml")
+async def post_yaml(*, body: str = Body(..., media_type="application/x-yaml")):
+    return body

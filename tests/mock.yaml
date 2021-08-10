@@ -2,16 +2,18 @@
 # profile:
 version: 0
 # app: tests.mock:app
+env:
+  APP_NAME: ${ env['PATH'] }
 transport:
   type: requests_job:ASGITransportLifespan
   kwargs:
     app: tests.mock:app
     # client: ["127.0.0.1", 123]
 base_url: http://testserver
-cert:
-  type: requests_job.builtins:tuple
-  args:
-    - ["path/to/client.pem", "path/to/client.key"]
+# cert:
+#   type: requests_job.builtins:tuple
+#   args:
+#     - ["path/to/client.pem", "path/to/client.key"]
 # proxies:
 #   - http://user:pass@10.0.0.1
 aliases:
@@ -60,11 +62,15 @@ jobs:
       # - url: "/auth/basic"
       #   expect:
       #     status_code: 401
-      # - url: "/auth/token"
-      #   method: post
-      #   data: { username: "dummy", password: "password" }
-      #   expect:
-      #     status_code: 200
+      - url: "/auth/token"
+        method: post
+        data: { username: "dummy", password: "password" }
+        # expect:
+        #   !save status_code: !eval 200 < x and x < 300
+        save:
+          id: url.host
+
+        # json: { id: !pull id }
       # - url: "/post_record"
       #   method: post
       #   json: { name: "aaa", arr: [1, 2, 3] }

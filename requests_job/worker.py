@@ -1,4 +1,4 @@
-from . import parser, verifier
+from . import verifier, yaml
 from .client import AsyncClientWrapper
 from .schemas import Job, Profile
 
@@ -9,7 +9,7 @@ class Token:
 
 
 class HttpxJob:
-    parser = parser
+    parser = yaml
     __schema__ = Profile
 
     def __init__(self, profile):

@@ -12,9 +12,7 @@ from typing import (
     no_type_check,
 )
 
-from pydantic import BaseModel, Field, FilePath
-from pydantic import HttpUrl
-from pydantic import PrivateAttr, validator
+from pydantic import BaseModel, Field, FilePath, HttpUrl, PrivateAttr, validator
 from pydantic.generics import GenericModel
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth, HTTPProxyAuth
 

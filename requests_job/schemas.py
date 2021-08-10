@@ -19,6 +19,10 @@ from .values import (
     Verify,
 )
 
+# from .sandbox import evalute_recursive, eval, Context, EvalStr
+# from . import resolver
+
+
 JsonTypes = Union[None, str, int, float, bool, dict, list]
 YamlTypes = Union[None, str, int, float, bool, dict, list, datetime, date]
 ExtensionTypes = Literal["yml", "json", "json5", "jsonc", "hjson"]
@@ -390,16 +394,35 @@ class Profile(Client, Extension):
     name: str = ""
     nodes: List[Job] = Field([], alias="jobs")
     tags: Set[str] = {"minutes", "hour", "daily", "month"}
+    env: dict = {}
 
     @property
     def jobs(self) -> Iterator[Job]:
         for job in self.nodes:
             yield job.merge_parent(self)
 
+    # def __init__(self, **kwargs):
+    #     ctx, new_kwargs = self.create_context_and_evalute(kwargs)
+    #     super().__init__(**new_kwargs)
 
-import httpx
+    # @classmethod
+    # def create_context_and_evalute(cls, kwargs):
+    #     env = kwargs.pop("env", {})
+    #     jobs = kwargs.pop("jobs", [])
+    #     context = resolver.resolve_eval_str_and_merge_context(
+    #         Context(),
+    #         {"env": env},
+    #     )
+    #     result = context.resolve({"env": env})
+    #     context.update({"env": env})
 
+    #     kwargs = resolver.resolve_eval_str(context, kwargs)
+    #     return context, {**kwargs, "env": context["env"], "jobs": jobs}
 
-async def func():
-    async with httpx.AsyncClient() as client:
-        client.request()
+    # @classmethod
+    # def set_context(cls, context):
+    #     cls.context = context
+
+    # @root_validator(pre=True)
+    # def evalute(cls, values):
+    #     return values
